@@ -12,7 +12,7 @@ var url = baseurl + apiKey;
  * @param  {Function} callback [A function that deals with the response object]
  * @return {null}              [No return value as the callback deals with this]
  **/
-function makeRequest(url, callback) {
+function fetch(url, callback) {
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4 && xhr.status === 200) {
@@ -33,11 +33,11 @@ function makeRequest(url, callback) {
 function actorsToMovies(actorArr) {
   var IDs = [];
   actorArr.forEach(function(actorQuery) {
-    makeRequest(url + actorQuery, function(response) {
+    fetch(url + actorQuery, function(response) {
       IDs.push(response.results[0].id);
       if (IDs.length === actorArr.length) {
         var newURL = 'https://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key=b412ada3278f30e284f60a334e6ae7ff&with_people=' + IDs.join(',');
-        makeRequest(newURL, function(response) {
+        fetch(newURL, function(response) {
           console.log(response);
         })
       }
