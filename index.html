@@ -7,9 +7,41 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <div id="player">
+      
+      <div id="player">
             
-        </div>
+      </div>
+
+      <form id="searchForm">
+        <label>actor name (optional)
+          <input placeholder="e.g Tom Cruise"></input>
+        </label>
+
+        <label>film genre
+          <select>
+            <option value="action">action </option>
+            <option value="adventure">adventure</option>
+            <option value="animation">animation</option>
+            <option value="comedy">comedy</option>
+            <option value="crime">crime </option>
+            <option value="documentary">adocumentary</option>
+            <option value="drama">drama</option>
+            <option value="family">family</option>
+            <option value="fantasy">fantasy</option>
+            <option value="history">history</option>
+            <option value="horror">horror</option>
+            <option value="music">music </option>
+            <option value="mystery">mystery</option>
+            <option value="romance">romance</option>
+            <option value="thriller">thriller</option>
+            <option value="war">war</option>
+            <option value="western">western</option>
+          </select>
+        </label>
+
+        <button type="submit">search</button>
+      </form>
+
         <script src="index.js"></script>
     </body>
 </html>
