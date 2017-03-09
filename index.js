@@ -29,16 +29,18 @@ function handleSubmit(event) {
 }
 
 function getTrailers(movieObj, callback) {
-  var idArray = movieObj.results.slice(0, 5).map(function(movie) {
-      return movie.id;
+  var movieArray = movieObj.results.slice(0, 5).map(function(movie) {
+    // console.log({title: movie.title, id: movie.id});
+      return {title: movie.title, id: movie.id};
     });
   var results = [];
-  idArray.forEach(function(id) {
-    var url = 'https://api.themoviedb.org/3/movie/' + id + '/videos?api_key=' + tmdbKey;
+  movieArray.forEach(function(object, i) {
+    var url = 'https://api.themoviedb.org/3/movie/' + object.id + '/videos?api_key=' + tmdbKey;
     fetch(url, null, function(response) {
-      results.push(response.results[0].key);
-      if (results.length === idArray.length) {
-        console.log(results, 'getTrailers function');
+      var movie = { title: movieArray[i].title, key: response.results[0].key };
+      results.push(movie);
+      if (movieArray.length === results.length) {
+        console.log(results);
         callback(results);
       }
     })
