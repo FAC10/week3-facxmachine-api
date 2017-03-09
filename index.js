@@ -38,12 +38,12 @@ function handleSubmit(event) {
 
 
 // Fetch Method
-function fetch(url, obj, callback) {
+function fetch(url, callback) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState === 4 && request.status === 200) {
             var responseObject = JSON.parse(request.responseText);
-            callback(responseObject, obj);
+            callback(responseObject);
         }
     }
     request.open('GET',url,true);
@@ -65,15 +65,20 @@ var constructedURL = buildURL('the matrix');
  *
  * @param {Object} response The data from NYTreview api
  */
-function getSummaryAndLink(response, obj) {
-    console.log(response);
-obj.summary = response.results[0].summary_short;
-obj.link = response.results[0].link.url;
-console.log(obj, 1);
-return obj;
+function renderSummaryAndLink(response) {
+  var summary = response.results[0].summary_short;
+  var link = response.results[0].link.url;
+  var movieSummary = createElement('div');
+  var movieLink = createElement('a');
+  movieLink.id = 'movie-link'
+  movieSummary.id = 'movie-summary'
+  movieSummary.innerHTML = summary;
+  movieLink.innerText = 'Link';
+  movieLink.href = link;
+  appendToDom(movieSummary,document.body);
+  appendToDom(movieLink,document.body)
 }
 
-// fetch(constructedURL, {}, getSummaryAndLink);
 
 
 //UPDATE DOM MODULE ====================
@@ -86,14 +91,35 @@ return obj;
 function createIframePlayer(id) {
    var iframe = document.createElement('iframe');
     iframe.src = 'https://www.youtube.com/embed/' + id
-    iframe.id = 'video'
-    document.body.appendChild(iframe)
+    iframe.id = id;
+    return iframe
+}
+var testFrame = createIframePlayer('test');
+/**
+ * Renders the movie data to the dom
+ *
+ * @returns {null} null
+ */
+
+/**
+ * Append a given element to the DOM
+ *
+ * @param {html element} element the element
+ * @param {html element} parent an already existent DOM element
+ */
+function appendToDom(element,parent) {
+    parent.appendChild(element);
 }
 
-function renderMovieReview() {
-  var storedObject = {};
-  fetch(constructedURL, storedObject, getSummaryAndLink);
-  console.log(storedObject, 'hi');
+/**
+ * Take a string and create an html element
+ *
+ * @param {html} element html element
+ * @returns {the element} html element
+ */
+function createElement(element) {
+    var htmlElement = document.createElement(element);
+    return htmlElement;
 }
-
-renderMovieReview();
+fetch(constructedURL,renderSummaryAndLink)
+// appendToDom(testFrame,document.body);
