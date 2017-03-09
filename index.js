@@ -76,43 +76,54 @@ function buildURL (movieTitle){
   return baseURL + nytimesKey;
 }
 
-var constructedURL = buildURL('the matrix');
-
-// var storedObject = {};
-/**
- * Gets a summary from NYtimes review api
- *
- * @param {Object} response The data from NYTreview api
- */
-function getSummaryAndLink(response, obj) {
-    console.log(response);
-obj.summary = response.results[0].summary_short;
-obj.link = response.results[0].link.url;
-console.log(obj, 1);
-return obj;
-}
-
-// fetch(constructedURL, {}, getSummaryAndLink);
-
 
 //UPDATE DOM MODULE ====================
 
+function renderSummaryAndLink(response) {
+  var summary = response.results[0].summary_short;
+  var link = response.results[0].link.url;
+  var movieSummary = createOurElement('div','movie-summary');
+  var movieLink = createOurElement('a',null,link);
+  movieSummary.innerHTML = summary;
+  movieLink.innerText = 'Link';
+  appendToDom(movieSummary,document.body);
+  appendToDom(movieLink,document.body)
+}
+
 /**
- * Creates an iframe with a given src
+ * Append a given element to the DOM
  *
- * @param {a string} id The movie id
+ * @param {html element} element the element
+ * @param {html element} parent an already existent DOM element
  */
-function createIframePlayer(id) {
-   var iframe = document.createElement('iframe');
-    iframe.src = 'https://www.youtube.com/embed/' + id
-    iframe.id = 'video'
-    document.body.appendChild(iframe)
+function appendToDom(element,parent) {
+    parent.appendChild(element);
 }
 
-function renderMovieReview() {
-  var storedObject = {};
-  fetch(constructedURL, storedObject, getSummaryAndLink);
-  console.log(storedObject, 'hi');
+/**
+ * Take a string and create an html element
+ *
+ * @param {html} element html element
+ * @returns {the element} html element
+ */
+function createOurElement(element,id,href,src) {
+    var htmlElement = document.createElement(element);
+    if (id) {
+        htmlElement.id = id;
+    }
+    if (href) {
+        htmlElement.href = href;
+    }
+    if (src){
+        htmlElement.src = src;
+    }
+    return htmlElement;
 }
 
-renderMovieReview();
+var testFrame = createOurElement('iframe','test',null,'https://www.youtube.com/embed/' +'VrrnjYgDBEk' );
+appendToDom(testFrame,document.body);
+
+function controller(){
+  var constructedURL = buildURL('the matrix'); //Feed title here//
+  fetch(constructedURL,renderSummaryAndLink);
+}
