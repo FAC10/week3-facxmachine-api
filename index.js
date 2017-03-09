@@ -25,40 +25,32 @@ function attachListener(element, eventType, cb) {
  */
 function handleSubmit(event) {
   event.preventDefault();
-  // We need to get an array to map over
-  return (
-    [...event.target]
-      .map(function(input) {
-        return (input.value);
-      })
-      // Removes the useless final element (the empty value of the submit)
-      .slice(0, -1)
-  )
+  getMoviesByGenre(event.target[0].value, doSomething);
 }
 
-function getMoviesByGenre(id) {
-  var baseURL = 'https://api.themoviedb.org/3/discover/movie?language=en-GB&sort_by=popularity.desc&api_key=' + tmdbKey;
-  var url = baseURL + '&with_genres=' + id;
-  fetch(url, getTrailers);
-}
-
-function getTrailers(movieObj) {
+function getTrailers(movieObj, callback) {
   var idArray = movieObj.results.slice(0, 5).map(function(movie) {
       return movie.id;
     });
   var results = [];
   idArray.forEach(function(id) {
     var url = 'https://api.themoviedb.org/3/movie/' + id + '/videos?api_key=' + tmdbKey;
-    fetch(url, function(response) {
+    fetch(url, null, function(response) {
       results.push(response.results[0].key);
       if (results.length === idArray.length) {
-        console.log(results);
+        callback(results);
       }
     })
   })
 }
 
-getMoviesByGenre('35');
+function getMoviesByGenre(genreID, cb) {
+  var baseURL = 'https://api.themoviedb.org/3/discover/movie?language=en-GB&sort_by=popularity.desc&api_key=' + tmdbKey;
+  var url = baseURL + '&with_genres=' + genreID;
+  fetch(url, null, function(movieObj) {
+    getTrailers(movieObj, cb)
+  });
+}
 
 /**
  * Make an API call to the URL and pass the response to the callback
