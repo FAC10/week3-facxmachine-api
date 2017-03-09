@@ -36,6 +36,55 @@ function handleSubmit(event) {
   )
 }
 
+function getMoviesByGenre(id) {
+  var baseURL = 'https://api.themoviedb.org/3/discover/movie?language=en-GB&sort_by=popularity.desc&api_key=' + tmdbKey;
+  var url = baseURL + '&with_genres=' + id;
+  fetch(url, getTrailers);
+}
+
+function getTrailers(movieObj) {
+  var idArray = movieObj.results.slice(0, 5).map(function(movie) {
+      return movie.id;
+    });
+  var results = [];
+  idArray.forEach(function(id) {
+    var url = 'https://api.themoviedb.org/3/movie/' + id + '/videos?api_key=' + tmdbKey;
+    fetch(url, function(response) {
+      results.push(response.results[0].key);
+      if (results.length === idArray.length) {
+        console.log(results);
+      }
+    })
+
+  })
+
+  // console.log(results);
+}
+
+getMoviesByGenre('35');
+
+/**
+ * Gets the IDs of the actors for further querying of The Movie Database
+ * @param  {array}    actorArr [An array of two strings for each actors name]
+ * @param  {Function} cb     [A function that takes the IDs for further queries]
+ * @return {[type]}          [description]
+ **/
+// function actorsToMovies(actorArr) {
+//   var IDs = [];
+//   actorArr.forEach(function(actorQuery) {
+//     fetch(url + actorQuery, function(response) {
+//       IDs.push(response.results[0].id);
+//       if (IDs.length === actorArr.length) {
+//         var newURL = 'https://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key=b412ada3278f30e284f60a334e6ae7ff&with_people=' + IDs.join(',');
+//         fetch(newURL, function(response) {
+//           console.log(response);
+//         })
+//       }
+//     })
+//   })
+// }
+
+
 var tag = document.createElement('script');
 tag.src = 'https://www.youtube.com/iframe_api';
 var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -94,20 +143,13 @@ function stopVideo() {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-// Fetch Method
-function fetch(url,callback) {
+/**
+ * Make an API call to the URL and pass the response to the callback
+ * @param  {string}   url      [The correct URL for the desired API]
+ * @param  {Function} callback [A function that deals with the response object]
+ * @return {null}              [No return value as the callback deals with this]
+ **/
+function fetch(url, callback) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState === 4 && request.status === 200) {
