@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width" />
         <title>FAC X's Awesome-tastic API project</title>
-        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
 
@@ -12,35 +12,37 @@
 
       </div>
 
-      <form id="searchForm">
-        <label>actor name (optional)
-          <input placeholder="e.g Tom Cruise"></input>
-        </label>
+      <section class="container">
 
-        <label>film genre
-          <select>
-            <option value="action">action </option>
-            <option value="adventure">adventure</option>
-            <option value="animation">animation</option>
-            <option value="comedy">comedy</option>
-            <option value="crime">crime </option>
-            <option value="documentary">adocumentary</option>
-            <option value="drama">drama</option>
-            <option value="family">family</option>
-            <option value="fantasy">fantasy</option>
-            <option value="history">history</option>
-            <option value="horror">horror</option>
-            <option value="music">music </option>
-            <option value="mystery">mystery</option>
-            <option value="romance">romance</option>
-            <option value="thriller">thriller</option>
-            <option value="war">war</option>
-            <option value="western">western</option>
-          </select>
-        </label>
+        <h1 class="page-title">What do you want to watch?</h1>
+        <form class="search-form" id="searchForm">
 
-        <button type="submit">search</button>
-      </form>
+          <label><span class="vh">film genre</span>
+            <select class="search-form_input">
+              <option value="action">action </option>
+              <option value="adventure">adventure</option>
+              <option value="animation">animation</option>
+              <option value="comedy">comedy</option>
+              <option value="crime">crime </option>
+              <option value="documentary">adocumentary</option>
+              <option value="drama">drama</option>
+              <option value="family">family</option>
+              <option value="fantasy">fantasy</option>
+              <option value="history">history</option>
+              <option value="horror">horror</option>
+              <option value="music">music </option>
+              <option value="mystery">mystery</option>
+              <option value="romance">romance</option>
+              <option value="thriller">thriller</option>
+              <option value="war">war</option>
+              <option value="western">western</option>
+            </select>
+          </label>
+
+          <button class="button" type="submit">search</button>
+        </form>
+
+      </section>
         <script src="config.js"></script>
         <script src="index.js"></script>
         <!-- <script src="index.js"></script> -->

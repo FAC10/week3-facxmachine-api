@@ -1,0 +1,61 @@
+/* Setup */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+.vh {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap;
+}
+
+
+/* Styles */
+body {
+  background: #4F772D;
+}
+.container {
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  max-width: 40em;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2.5em;
+  color: #fff;
+}
+
+.search-form {
+  text-align: center;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.search-form_input {
+  min-width: 80%;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 5px;
+  color: #4C474A;
+}
+
+.button {
+  max-width: 20%;
+  border: 0px;
+  font-size: 1.2em;
+  border: none;
+  background: #fff;
+  border-radius: 5px;
+  color: #4C474A;
+}
