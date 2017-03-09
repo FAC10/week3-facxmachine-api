@@ -90,8 +90,6 @@ function fetch(url,callback) {
 function buildURL (videoQuery){
   var baseURL = 'https://www.googleapis.com/youtube/v3/search/?part=snippet&q=' + videoQuery + '&type=video&key=';
   videoQuery = encodeURI(videoQuery);
-  //Need to take out this API key!!!!!!!!!!!!!:
-  var APIkey = 'AIzaSyC7nC_V0Udrr0v115_SYmCsPounM-_RsIg'
   return baseURL + APIkey;
 }
 
