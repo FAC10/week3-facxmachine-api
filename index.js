@@ -55,93 +55,10 @@ function getTrailers(movieObj) {
         console.log(results);
       }
     })
-
   })
-
-  // console.log(results);
 }
 
 getMoviesByGenre('35');
-
-/**
- * Gets the IDs of the actors for further querying of The Movie Database
- * @param  {array}    actorArr [An array of two strings for each actors name]
- * @param  {Function} cb     [A function that takes the IDs for further queries]
- * @return {[type]}          [description]
- **/
-// function actorsToMovies(actorArr) {
-//   var IDs = [];
-//   actorArr.forEach(function(actorQuery) {
-//     fetch(url + actorQuery, function(response) {
-//       IDs.push(response.results[0].id);
-//       if (IDs.length === actorArr.length) {
-//         var newURL = 'https://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key=b412ada3278f30e284f60a334e6ae7ff&with_people=' + IDs.join(',');
-//         fetch(newURL, function(response) {
-//           console.log(response);
-//         })
-//       }
-//     })
-//   })
-// }
-
-
-var tag = document.createElement('script');
-tag.src = 'https://www.youtube.com/iframe_api';
-var firstScriptTag = document.getElementsByTagName('script')[0];
-
-firstScriptTag.parentNode.insertBefore(tag,firstScriptTag);
-
-
-var player;
-var videoId;
-
-/**
- * [onYouTubeIframeAPIReady this function creates an iFrame and Youtube player after the API code downloads ]
- * @return it doesn't return anything but creates a global object
- **/
-
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player',{
-        height: '300',
-        width: '600',
-        videoId: videoId,
-        events:{
-            'onReady':onPlayerReady,
-            'onStateChange':onPlayerStateChange
-        }
-    });
-}
-
-/**
- * [onPlayerReady the API will call this function when the video is ready
- * @param  {[type]} event - an event object
- * @return {[type]} it plays the video
- */
-function onPlayerReady(event) {
-    event.target.playVideo();
-}
-
-var done = false;
-/**
- * [onPlayerStateChange  the API calls this function when the player state changes, the function indicates that when playing a video, status = 1. The video will play for six seconds and it'll stop.
- * @param  {[type]} event - an event object
- * @return {[type]}
- */
-function onPlayerStateChange(event) {
-    if (event.data === YT.PlayerState.PLAYING && !done) {
-       setTimeout(stopVideo, 6000);
-        done = true;
-    }
-}
-
-/**
- * [stopVideo a function that stops the video
- * @return {[type]} [description]
- */
-function stopVideo() {
-    player.stopVideo();
-}
-
 
 /**
  * Make an API call to the URL and pass the response to the callback
@@ -149,40 +66,61 @@ function stopVideo() {
  * @param  {Function} callback [A function that deals with the response object]
  * @return {null}              [No return value as the callback deals with this]
  **/
-function fetch(url, callback) {
+function fetch(url, obj, callback) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState === 4 && request.status === 200) {
             var responseObject = JSON.parse(request.responseText);
-            callback(responseObject);
+            callback(responseObject, obj);
         }
     }
     request.open('GET',url,true);
     request.send();
 }
 
-/**
- * [buildURL a function that outputs the right API URL given the query string
- * @param  {[string]} videoQuery - the thing the user is searching for
- * @return {[string]}            the constructedURL
- */
-function buildURL (videoQuery){
-  var baseURL = 'https://www.googleapis.com/youtube/v3/search/?part=snippet&q=' + videoQuery + '&type=video&key=';
-  videoQuery = encodeURI(videoQuery);
-  //Need to take out this API key!!!!!!!!!!!!!:
-  var APIkey = 'AIzaSyC7nC_V0Udrr0v115_SYmCsPounM-_RsIg'
-  return baseURL + APIkey;
+function buildURL (movieTitle){
+  movieTitle = encodeURI(movieTitle);
+  var baseURL = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?query=" + movieTitle + '&api-key=';
+  return baseURL + nytimesKey;
 }
 
-var constructedURL = buildURL('spice girls');
+var constructedURL = buildURL('the matrix');
 
+// var storedObject = {};
 /**
- * [getVideoIds a function that pulls the ID property off the response object for the desired subject
- * @param  {[object]} response parsed JSON object
- * @return
+ * Gets a summary from NYtimes review api
+ *
+ * @param {Object} response The data from NYTreview api
  */
-function getVideoIds(response) {
-    videoId = response.items[0].id.videoId;
+function getSummaryAndLink(response, obj) {
+    console.log(response);
+obj.summary = response.results[0].summary_short;
+obj.link = response.results[0].link.url;
+console.log(obj, 1);
+return obj;
 }
 
-fetch(constructedURL, getVideoIds);
+// fetch(constructedURL, {}, getSummaryAndLink);
+
+
+//UPDATE DOM MODULE ====================
+
+/**
+ * Creates an iframe with a given src
+ *
+ * @param {a string} id The movie id
+ */
+function createIframePlayer(id) {
+   var iframe = document.createElement('iframe');
+    iframe.src = 'https://www.youtube.com/embed/' + id
+    iframe.id = 'video'
+    document.body.appendChild(iframe)
+}
+
+function renderMovieReview() {
+  var storedObject = {};
+  fetch(constructedURL, storedObject, getSummaryAndLink);
+  console.log(storedObject, 'hi');
+}
+
+renderMovieReview();
