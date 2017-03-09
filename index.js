@@ -1,10 +1,11 @@
-
+(function createYoutubeTag(){
 var tag = document.createElement('script');
 tag.src = 'https://www.youtube.com/iframe_api';
+tag.id = 'youtubePlayer';
 var firstScriptTag = document.getElementsByTagName('script')[0];
 
 firstScriptTag.parentNode.insertBefore(tag,firstScriptTag);
-
+}());
 
 var player;
 var videoId;
@@ -88,14 +89,14 @@ function fetch(url,callback) {
  * @return {[string]}            the constructedURL
  */
 function buildURL (videoQuery){
-  var baseURL = 'https://www.googleapis.com/youtube/v3/search/?part=snippet&q=' + videoQuery + '&type=video&key=';
   videoQuery = encodeURI(videoQuery);
+  var baseURL = 'https://www.googleapis.com/youtube/v3/search/?part=snippet&q=' + videoQuery + '&type=video&key=';
   //Need to take out this API key!!!!!!!!!!!!!:
   var APIkey = 'AIzaSyC7nC_V0Udrr0v115_SYmCsPounM-_RsIg'
   return baseURL + APIkey;
 }
 
-var constructedURL = buildURL('spice girls');
+var constructedURL = buildURL('kenny g');
 
 /**
  * [getVideoIds a function that pulls the ID property off the response object for the desired subject
