@@ -25,31 +25,52 @@ function attachListener(element, eventType, cb) {
  */
 function handleSubmit(event) {
   event.preventDefault();
-  // We need to get an array to map over
-  return (
-    [...event.target]
-      .map(function(input) {
-        return (input.value);
-      })
-      // Removes the useless final element (the empty value of the submit)
-      .slice(0, -1)
-  )
+  getMoviesByGenre(event.target[0].value, controller);
 }
 
+function getTrailers(movieObj, callback) {
+  var idArray = movieObj.results.slice(0, 5).map(function(movie) {
+      return movie.id;
+    });
+  var results = [];
+  idArray.forEach(function(id) {
+    var url = 'https://api.themoviedb.org/3/movie/' + id + '/videos?api_key=' + tmdbKey;
+    fetch(url, null, function(response) {
+      results.push(response.results[0].key);
+      if (results.length === idArray.length) {
+        console.log(results, 'getTrailers function');
+        callback(results);
+      }
+    })
+  })
+}
+attachListener(getElement('searchForm'), 'submit', handleSubmit);
 
-// Fetch Method
+function getMoviesByGenre(genreID, cb) {
+  var baseURL = 'https://api.themoviedb.org/3/discover/movie?language=en-GB&sort_by=popularity.desc&api_key=' + tmdbKey;
+  var url = baseURL + '&with_genres=' + genreID;
+  fetch(url, null, function(movieObj) {
+    getTrailers(movieObj, cb)
+  });
+}
+
+/**
+ * Make an API call to the URL and pass the response to the callback
+ * @param  {string}   url      [The correct URL for the desired API]
+ * @param  {Function} callback [A function that deals with the response object]
+ * @return {null}              [No return value as the callback deals with this]
+ **/
 function fetch(url, obj, callback) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState === 4 && request.status === 200) {
             var responseObject = JSON.parse(request.responseText);
-            callback(responseObject, obj);
+            callback(responseObject, null, callback);
         }
     }
     request.open('GET',url,true);
     request.send();
 }
-
 
 function buildURL (movieTitle){
   movieTitle = encodeURI(movieTitle);
@@ -57,43 +78,65 @@ function buildURL (movieTitle){
   return baseURL + nytimesKey;
 }
 
-var constructedURL = buildURL('the matrix');
-
-// var storedObject = {};
-/**
- * Gets a summary from NYtimes review api
- *
- * @param {Object} response The data from NYTreview api
- */
-function getSummaryAndLink(response, obj) {
-    console.log(response);
-obj.summary = response.results[0].summary_short;
-obj.link = response.results[0].link.url;
-console.log(obj, 1);
-return obj;
-}
-
-// fetch(constructedURL, {}, getSummaryAndLink);
-
 
 //UPDATE DOM MODULE ====================
 
+function renderSummaryAndLink(response) {
+  var summary = response.results[0].summary_short;
+  var link = response.results[0].link.url;
+  var movieSummary = createOurElement('div','movie-summary');
+  var movieLink = createOurElement('a',null,link);
+  movieSummary.innerHTML = summary;
+  movieLink.innerText = 'Link';
+  appendToDom(movieSummary,document.body);
+  appendToDom(movieLink,document.body)
+}
+
 /**
- * Creates an iframe with a given src
+ * Append a given element to the DOM
  *
- * @param {a string} id The movie id
+ * @param {html element} element the element
+ * @param {html element} parent an already existent DOM element
  */
-function createIframePlayer(id) {
-   var iframe = document.createElement('iframe');
-    iframe.src = 'https://www.youtube.com/embed/' + id
-    iframe.id = 'video'
-    document.body.appendChild(iframe)
+function appendToDom(element,parent) {
+    parent.appendChild(element);
 }
 
-function renderMovieReview() {
-  var storedObject = {};
-  fetch(constructedURL, storedObject, getSummaryAndLink);
-  console.log(storedObject, 'hi');
+/**
+ * Take a string and create an html element
+ *
+ * @param {html} element html element
+ * @returns {the element} html element
+ */
+function createOurElement(element,id,href,src) {
+    var htmlElement = document.createElement(element);
+    if (id) {
+        htmlElement.id = id;
+    }
+    if (href) {
+        htmlElement.href = href;
+    }
+    if (src){
+        htmlElement.src = src;
+    }
+    return htmlElement;
 }
 
-renderMovieReview();
+var testFrame = createOurElement('iframe','test',null,'https://www.youtube.com/embed/' +'VrrnjYgDBEk' );
+appendToDom(testFrame,document.body);
+
+function controller(results){
+  var iframeArray = [];
+  results.map(function(result){
+    iframeArray.push(createOurElement('iframe', result, null, 'https://www.youtube.com/embed/' + result));
+  });
+iframeArray.forEach(function(iframe){
+  appendToDom(iframe, document.body);
+})
+  console.log(iframeArray);
+
+
+  var constructedURL = buildURL('the matrix'); //Feed title here//
+  console.log(results, 'controller function')
+  fetch(constructedURL, null, renderSummaryAndLink);
+}
