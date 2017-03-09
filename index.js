@@ -54,18 +54,37 @@ function fetch(url,callback) {
 function buildURL (movieTitle){
   movieTitle = encodeURI(movieTitle);
   var baseURL = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?query=" + movieTitle + '&api-key=';
-    console.log(baseURL + nytimesKey);
   return baseURL + nytimesKey;
 }
 
 var constructedURL = buildURL('the matrix');
 
+/**
+ * Gets a summary from NYtimes review api
+ *
+ * @param {Object} response The data from NYTreview api
+ */
 function getSummaryAndLink(response) {
     console.log(response);
  var summary = response.results[0].summary_short;
  var link = response.results[0].link.url;
-    console.log(summary);
-    console.log(link);
 }
 
 fetch(constructedURL, getSummaryAndLink);
+
+
+//UPDATE DOM MODULE ====================
+
+/**
+ * Creates an iframe with a given src
+ *
+ * @param {a string} id The movie id
+ */
+function createIframePlayer(id) {
+   var iframe = document.createElement('iframe'); 
+    iframe.src = 'https://www.youtube.com/embed/' + id
+    iframe.id = 'video'
+    document.body.appendChild(iframe)
+}
+
+
