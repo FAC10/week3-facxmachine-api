@@ -25,7 +25,7 @@ function attachListener(element, eventType, cb) {
  */
 function handleSubmit(event) {
   event.preventDefault();
-  getMoviesByGenre(event.target[0].value, doSomething);
+  getMoviesByGenre(event.target[0].value, controller);
 }
 
 function getTrailers(movieObj, callback) {
@@ -38,11 +38,13 @@ function getTrailers(movieObj, callback) {
     fetch(url, null, function(response) {
       results.push(response.results[0].key);
       if (results.length === idArray.length) {
+        console.log(results, 'getTrailers function');
         callback(results);
       }
     })
   })
 }
+attachListener(getElement('searchForm'), 'submit', handleSubmit);
 
 function getMoviesByGenre(genreID, cb) {
   var baseURL = 'https://api.themoviedb.org/3/discover/movie?language=en-GB&sort_by=popularity.desc&api_key=' + tmdbKey;
@@ -63,7 +65,7 @@ function fetch(url, obj, callback) {
     request.onreadystatechange = function() {
         if (request.readyState === 4 && request.status === 200) {
             var responseObject = JSON.parse(request.responseText);
-            callback(responseObject, obj);
+            callback(responseObject, null, callback);
         }
     }
     request.open('GET',url,true);
@@ -123,7 +125,18 @@ function createOurElement(element,id,href,src) {
 var testFrame = createOurElement('iframe','test',null,'https://www.youtube.com/embed/' +'VrrnjYgDBEk' );
 appendToDom(testFrame,document.body);
 
-function controller(){
+function controller(results){
+  var iframeArray = [];
+  results.map(function(result){
+    iframeArray.push(createOurElement('iframe', result, null, 'https://www.youtube.com/embed/' + result));
+  });
+iframeArray.forEach(function(iframe){
+  appendToDom(iframe, document.body);
+})
+  console.log(iframeArray);
+
+
   var constructedURL = buildURL('the matrix'); //Feed title here//
-  fetch(constructedURL,renderSummaryAndLink);
+  console.log(results, 'controller function')
+  fetch(constructedURL, null, renderSummaryAndLink);
 }
