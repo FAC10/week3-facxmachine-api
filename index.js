@@ -68,13 +68,13 @@ var constructedURL = buildURL('the matrix');
 function renderSummaryAndLink(response) {
   var summary = response.results[0].summary_short;
   var link = response.results[0].link.url;
-  var movieSummary = createElement('div');
-  var movieLink = createElement('a');
-  movieLink.id = 'movie-link'
-  movieSummary.id = 'movie-summary'
+  var movieSummary = createElement('div','movie-summary');
+  var movieLink = createElement('a',null,link);
+  // movieLink.id = 'movie-link'
+  // movieSummary.id = 'movie-summary'
   movieSummary.innerHTML = summary;
   movieLink.innerText = 'Link';
-  movieLink.href = link;
+  // movieLink.href = link;
   appendToDom(movieSummary,document.body);
   appendToDom(movieLink,document.body)
 }
@@ -88,13 +88,12 @@ function renderSummaryAndLink(response) {
  *
  * @param {a string} id The movie id
  */
-function createIframePlayer(id) {
-   var iframe = document.createElement('iframe');
-    iframe.src = 'https://www.youtube.com/embed/' + id
-    iframe.id = id;
-    return iframe
-}
-var testFrame = createIframePlayer('test');
+// function createIframePlayer(id) {
+//    var iframe = document.createElement('iframe');
+//     iframe.src = 'https://www.youtube.com/embed/' + id
+//     iframe.id = id;
+//     return iframe
+// }
 /**
  * Renders the movie data to the dom
  *
@@ -117,9 +116,23 @@ function appendToDom(element,parent) {
  * @param {html} element html element
  * @returns {the element} html element
  */
-function createElement(element) {
+function createElement(element,id,href,src) {
     var htmlElement = document.createElement(element);
+    if (id) {
+        htmlElement.id = id;
+    }
+    if (href) {
+        htmlElement.href = href;
+    }
+    if (src){
+        htmlElement.src = src; 
+    }
     return htmlElement;
 }
 fetch(constructedURL,renderSummaryAndLink)
-// appendToDom(testFrame,document.body);
+
+
+
+
+var testFrame = createElement('iframe','test',null,'https://www.youtube.com/embed/' +'VrrnjYgDBEk' );
+appendToDom(testFrame,document.body);
