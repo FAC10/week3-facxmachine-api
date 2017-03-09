@@ -25,19 +25,39 @@ function attachListener(element, eventType, cb) {
  */
 function handleSubmit(event) {
   event.preventDefault();
-  // We need to get an array to map over
-  return (
-    [...event.target]
-      .map(function(input) {
-        return (input.value);
-      })
-      // Removes the useless final element (the empty value of the submit)
-      .slice(0, -1)
-  )
+  getMoviesByGenre(event.target[0].value, doSomething);
 }
 
+function getTrailers(movieObj, callback) {
+  var idArray = movieObj.results.slice(0, 5).map(function(movie) {
+      return movie.id;
+    });
+  var results = [];
+  idArray.forEach(function(id) {
+    var url = 'https://api.themoviedb.org/3/movie/' + id + '/videos?api_key=' + tmdbKey;
+    fetch(url, null, function(response) {
+      results.push(response.results[0].key);
+      if (results.length === idArray.length) {
+        callback(results);
+      }
+    })
+  })
+}
 
-// Fetch Method
+function getMoviesByGenre(genreID, cb) {
+  var baseURL = 'https://api.themoviedb.org/3/discover/movie?language=en-GB&sort_by=popularity.desc&api_key=' + tmdbKey;
+  var url = baseURL + '&with_genres=' + genreID;
+  fetch(url, null, function(movieObj) {
+    getTrailers(movieObj, cb)
+  });
+}
+
+/**
+ * Make an API call to the URL and pass the response to the callback
+ * @param  {string}   url      [The correct URL for the desired API]
+ * @param  {Function} callback [A function that deals with the response object]
+ * @return {null}              [No return value as the callback deals with this]
+ **/
 function fetch(url, obj, callback) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -49,7 +69,6 @@ function fetch(url, obj, callback) {
     request.open('GET',url,true);
     request.send();
 }
-
 
 function buildURL (movieTitle){
   movieTitle = encodeURI(movieTitle);
