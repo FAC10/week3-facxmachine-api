@@ -5,7 +5,6 @@
  * @return {node}    [a DOM node]
  */
 function getElement(id) {
-  console.log(id);
   return document.getElementById(id);
 }
 
@@ -20,7 +19,22 @@ function attachListener(element, eventType, cb) {
   element.addEventListener(eventType, cb)
 }
 
-// attachListener(getElement('searchForm'), 'submit', function(event){
-//     event.preventDefault();
-//     console.dir(event.target);
-// });
+/**
+ * Gets the values we need from the form's submit event
+ * @param  {object} event [The submit object returned when the event fires]
+ * @return {array}       [An array of the input values]
+ */
+function handleSubmit(event) {
+  event.preventDefault();
+  // We need to get an array to map over
+  return (
+    [...event.target]
+      .map(function(input) {
+        return (input.value);
+      })
+      // Removes the useless final element (the empty value of the submit)
+      .slice(0, -1)
+  )
+}
+
+// attachListener(getElement('searchForm'), 'submit', handleSubmit);
