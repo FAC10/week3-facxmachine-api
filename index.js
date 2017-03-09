@@ -38,12 +38,12 @@ function handleSubmit(event) {
 
 
 // Fetch Method
-function fetch(url,callback) {
+function fetch(url, obj, callback) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState === 4 && request.status === 200) {
             var responseObject = JSON.parse(request.responseText);
-            callback(responseObject);
+            callback(responseObject, obj);
         }
     }
     request.open('GET',url,true);
@@ -54,18 +54,46 @@ function fetch(url,callback) {
 function buildURL (movieTitle){
   movieTitle = encodeURI(movieTitle);
   var baseURL = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?query=" + movieTitle + '&api-key=';
-    console.log(baseURL + nytimesKey);
   return baseURL + nytimesKey;
 }
 
 var constructedURL = buildURL('the matrix');
 
-function getSummaryAndLink(response) {
+// var storedObject = {};
+/**
+ * Gets a summary from NYtimes review api
+ *
+ * @param {Object} response The data from NYTreview api
+ */
+function getSummaryAndLink(response, obj) {
     console.log(response);
- var summary = response.results[0].summary_short;
- var link = response.results[0].link.url;
-    console.log(summary);
-    console.log(link);
+obj.summary = response.results[0].summary_short;
+obj.link = response.results[0].link.url;
+console.log(obj, 1);
+return obj;
 }
 
-fetch(constructedURL, getSummaryAndLink);
+// fetch(constructedURL, {}, getSummaryAndLink);
+
+
+//UPDATE DOM MODULE ====================
+
+/**
+ * Creates an iframe with a given src
+ *
+ * @param {a string} id The movie id
+ */
+function createIframePlayer(id) {
+   var iframe = document.createElement('iframe');
+    iframe.src = 'https://www.youtube.com/embed/' + id
+    iframe.id = 'video'
+    document.body.appendChild(iframe)
+}
+
+function renderMovieReview() {
+  var storedObject = {};
+  fetch(constructedURL, storedObject, getSummaryAndLink);
+  console.log(storedObject, 'hi');
+}
+
+renderMovieReview();
