@@ -1,7 +1,7 @@
-# week3-facxmachine-api
-FACX Machine's awesome-tastic api project
+# What movie should I watch?
+FACX Machine's awesome-tastic API project
 
-Architecture
+##Architecture
 ===
 ![Picture of our architecture](./assets/architecture.jpg)
 
@@ -16,12 +16,12 @@ Architecture
 
 5. I want to be able to watch the trailer associated with the movie results
 
-## Using the YouTube API
+## Attempting to use the YouTube API
 1. We used the YouTube api by first identifying the endpoint which is `https://www.googleapis.com/youtube/v3/search?`
 2. We then specified the `&q=OUR_QUERY` and `&videoDuration=short`, our `order=relevance` to ensure only relevant responses were returned
 3. Our final query string was `https://www.googleapis.com/youtube/v3/search?part=snippet&order=relevance&q=the+help+trailer&type=video&videoDuration=short&key={YOUR_API_KEY}`
 
-[Insert problems with YouTube API here]
+_We encountered some problems with the API. It's more complex than a standard 'send request, get data' API — YouTube creates a global object that calls methods. Eventually we realised that searching YouTube with a movie title wasn't the best way to get trailers anyway — The Movie Database API can actually provide the YouTube key for the trailer we want, which we can use to build an iframe._
 
 ## Using The Movie Database API
 1. We request popular movies of a given genre using the relevant genre ID
