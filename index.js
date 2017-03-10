@@ -89,17 +89,7 @@ function buildURL(movieTitle) {
 
 //UPDATE DOM MODULE ====================
 
-function compileData(nytRes, tmdbRes, index) {
-    var dataObj = {
-      index: index,
-      title: nytRes.results[0].display_title,
-      summary: nytRes.results[0].summary_short,
-      link: nytRes.results[0].link.url,
-      url: 'https://www.youtube.com/embed/' + tmdbRes.key,
-    }
-    // console.log(dataObj);
-
-    function renderToDOM(dataObj) {
+    function renderToDOM(dataObj,index) {
       var article = getElement('article' + index);
       article.innerHTML = '';
       var movieVideo = createOurElement('iframe', 'result_video', null, dataObj.url);
@@ -116,7 +106,18 @@ function compileData(nytRes, tmdbRes, index) {
       appendToDom(movieVideo, article);
       appendToDom(movieBody, article);
     }
-    renderToDOM(dataObj);
+
+function compileData(nytRes, tmdbRes, index) {
+    var dataObj = {
+      index: index,
+      title: nytRes.results[0].display_title,
+      summary: nytRes.results[0].summary_short,
+      link: nytRes.results[0].link.url,
+      url: 'https://www.youtube.com/embed/' + tmdbRes.key,
+    }
+    // console.log(dataObj);
+
+    renderToDOM(dataObj,index);
 }
 
 /**
