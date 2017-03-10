@@ -130,9 +130,6 @@ function createOurElement(element, id, href, src) {
     return htmlElement;
 }
 
-var testFrame = createOurElement('iframe', 'test', null, 'https://www.youtube.com/embed/' + 'VrrnjYgDBEk');
-appendToDom(testFrame, document.body);
-
 function controller(results) {
     var iframeArray = [];
     console.log(results);
