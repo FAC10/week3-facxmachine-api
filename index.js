@@ -28,6 +28,9 @@ function handleSubmit(event) {
     getMoviesByGenre(event.target[0].value, controller);
 }
 
+attachListener(getElement('searchForm'), 'submit', handleSubmit);
+
+
 function getTrailers(movieObj, callback) {
     var movieArray = movieObj.results.slice(0, 5).map(function(movie) {
         // console.log({title: movie.title, id: movie.id});
@@ -52,7 +55,6 @@ function getTrailers(movieObj, callback) {
         })
     })
 }
-attachListener(getElement('searchForm'), 'submit', handleSubmit);
 
 function getMoviesByGenre(genreID, cb) {
     var baseURL = 'https://api.themoviedb.org/3/discover/movie?language=en-GB&sort_by=popularity.desc&api_key=' + tmdbKey;
