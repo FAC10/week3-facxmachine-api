@@ -39,7 +39,7 @@ function getTrailers(movieObj, callback) {
     var results = [];
     movieArray.forEach(function(object, i) {
         var url = 'https://api.themoviedb.org/3/movie/' + object.id + '/videos?api_key=' + tmdbKey;
-        fetch(url, null, function(response) {
+        fetch(url, function(response) {
             var movie = {
                 title: movieArray[i].title,
                 key: response.results[0].key
@@ -57,7 +57,7 @@ attachListener(getElement('searchForm'), 'submit', handleSubmit);
 function getMoviesByGenre(genreID, cb) {
     var baseURL = 'https://api.themoviedb.org/3/discover/movie?language=en-GB&sort_by=popularity.desc&api_key=' + tmdbKey;
     var url = baseURL + '&with_genres=' + genreID;
-    fetch(url, null, function(movieObj) {
+    fetch(url, function(movieObj) {
         getTrailers(movieObj, cb)
     });
 }
@@ -68,12 +68,12 @@ function getMoviesByGenre(genreID, cb) {
  * @param  {Function} callback [A function that deals with the response object]
  * @return {null}              [No return value as the callback deals with this]
  **/
-function fetch(url, obj, callback) {
+function fetch(url, callback) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState === 4 && request.status === 200) {
             var responseObject = JSON.parse(request.responseText);
-            callback(responseObject, null, callback);
+            callback(responseObject, callback);
         }
     }
     request.open('GET', url, true);
@@ -92,12 +92,26 @@ function buildURL(movieTitle) {
 function renderSummaryAndLink(response) {
     var summary = response.results[0].summary_short;
     var link = response.results[0].link.url;
-    var movieSummary = createOurElement('div', 'movie-summary');
-    var movieLink = createOurElement('a', null, link);
+    var title = response.results[0].display_title;
+    var movieSummary = createOurElement('p', 'result_review');
+    var movieLink = createOurElement('a', 'result_link', link);
+    var movieTitle = createOurElement('h2', 'result_title');
+    var article = document.querySelectorAll('article');
+    console.log(article, 1)
+
     movieSummary.innerHTML = summary;
-    movieLink.innerText = 'Link';
-    appendToDom(movieSummary, document.body);
-    appendToDom(movieLink, document.body)
+    movieLink.innerText = 'Link to review';
+    movieTitle.innerText = title;
+
+    article.forEach(function(item, index){
+      console.log(item, 2);
+      if (item.id === item[index]) {
+      appendToDom(movieSummary, item);
+      appendToDom(movieLink, item);
+      appendToDom(movieTitle, item);
+    };
+    })
+
 }
 
 /**
@@ -116,10 +130,10 @@ function appendToDom(element, parent) {
  * @param {html} element html element
  * @returns {the element} html element
  */
-function createOurElement(element, id, href, src) {
+function createOurElement(element, elClass, href, src) {
     var htmlElement = document.createElement(element);
-    if (id) {
-        htmlElement.id = id;
+    if (elClass) {
+        htmlElement.class = elClass;
     }
     if (href) {
         htmlElement.href = href;
@@ -130,20 +144,27 @@ function createOurElement(element, id, href, src) {
     return htmlElement;
 }
 
+<<<<<<< Updated upstream
+=======
+// var testFrame = createOurElement('iframe', 'test', null, 'https://www.youtube.com/embed/' + 'VrrnjYgDBEk');
+// appendToDom(testFrame, document.body);
+
+>>>>>>> Stashed changes
 function controller(results) {
     var iframeArray = [];
-    console.log(results);
-    console.log(results, 'controller function')
+
     results.map(function(result) {
         var title = result.title;
         var key = result.key;
         iframeArray.push(createOurElement('iframe', title, null, 'https://www.youtube.com/embed/' + result.key));
         var constructedURL = buildURL(title); //Feed title here//
-        fetch(constructedURL, null, renderSummaryAndLink);
+        fetch(constructedURL, renderSummaryAndLink);
 
     });
-    iframeArray.forEach(function(iframe) {
-        appendToDom(iframe, document.body);
+    var article = document.querySelectorAll('article');
+
+    iframeArray.forEach(function(iframe, index) {
+      appendToDom(iframe, article[index]);
     })
-    console.log(iframeArray);
+
 }
