@@ -79,11 +79,17 @@ function buildURL(movieTitle) {
  */
 function handleSubmit(event) {
     event.preventDefault();
-    getMoviesByGenre(event.target[0].value, controller);
+    getMoviesByGenre(event.target[0].value, getReviews);
 }
 
 attachListener(getElement('searchForm'), 'submit', handleSubmit);
 
+/**
+ * Queries The Movie Database and then passes an object of movies to getTrailers
+ * @param  {string}   genreID [The ID relating to the genre selected in the form]
+ * @param  {Function} cb      [A callback - in this case getTrailers]
+ * @return {null}             [No return value]
+ */
 function getMoviesByGenre(genreID, cb) {
     var baseURL = 'https://api.themoviedb.org/3/discover/movie?language=en-GB&sort_by=popularity.desc&api_key=' + tmdbKey;
     var url = baseURL + '&with_genres=' + genreID;
@@ -92,13 +98,22 @@ function getMoviesByGenre(genreID, cb) {
     });
 }
 
+/**
+ * Queries The Movie Database with movie names to get YouTube trailer keys back
+ * @param  {object}   movieObj [The return object of movies from the first fetch]
+ * @param  {Function} callback [A callback - in this case getReviews]
+ * @return {null}              [No return value]
+ */
 function getTrailers(movieObj, callback) {
+    // Get only the first 5 results
     var movieArray = movieObj.results.slice(0, 5).map(function(movie) {
+        // Create an object with only the properties we're interested in
         return {
             title: movie.title,
             id: movie.id
         };
     });
+    // Parallel requests function
     var results = [];
     movieArray.forEach(function(object, i) {
         var url = 'https://api.themoviedb.org/3/movie/' + object.id + '/videos?api_key=' + tmdbKey;
@@ -108,6 +123,7 @@ function getTrailers(movieObj, callback) {
                 key: response.results[0].key
             };
             results.push(movie);
+            // Wait until we have all the fetches back before calling callback
             if (movieArray.length === results.length) {
                 callback(results);
             }
@@ -115,7 +131,13 @@ function getTrailers(movieObj, callback) {
     })
 }
 
-function controller(results) {
+// This is the callback passed to the first requests above
+/**
+ * Makes a call to the NYT API for each of the 5 movie objects passed in
+ * @param  {object} results [An object with the movie title and YouTube key]
+ * @return {null}         [No return value]
+ */
+function getReviews(results) {
     results.forEach(function(result, index) {
         var constructedURL = buildURL(result.title);
         fetch(constructedURL, function(nytRes) {
@@ -124,8 +146,14 @@ function controller(results) {
     });
 }
 
-//UPDATE DOM MODULE ====================
 
+/**
+ * Combines the two objects of response data into one nice clean object
+ * @param  {object} nytRes  [The object of info from the NYT API response]
+ * @param  {object} tmdbRes [The object of movie titles and YouTube keys]
+ * @param  {number} index   [The index of each fetch call within the forEach]
+ * @return {null}           [No return value]
+ */
 function compileData(nytRes, tmdbRes, index) {
     var dataObj = {
       index: index,
@@ -134,11 +162,15 @@ function compileData(nytRes, tmdbRes, index) {
       link: nytRes.results[0].link.url,
       url: 'https://www.youtube.com/embed/' + tmdbRes.key,
     }
-    console.log(dataObj);
-
     renderToDOM(dataObj,index);
 }
 
+/**
+ * Takes the object from compileData and renders it all to the DOM
+ * @param  {object} dataObj [The final object of data we need to put into the DOM]
+ * @param  {number} index   [The index of the particular API call within the ForEach above]
+ * @return {null}         [No return value :(]
+ */
 function renderToDOM(dataObj,index) {
   var article = getElement('article' + index);
     article.innerHTML = '';
