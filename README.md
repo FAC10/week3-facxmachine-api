@@ -13,9 +13,11 @@ Architecture
 2. We then specified the `&q=OUR_QUERY` and `&videoDuration=short`, our `order=relevance` to ensure only relevant responses were returned
 3. Our final query string was `https://www.googleapis.com/youtube/v3/search?part=snippet&order=relevance&q=the+help+trailer&type=video&videoDuration=short&key={YOUR_API_KEY}`
 
-##Using the Movie DB API
-1. We make a request to this API searching for an actor which returns an object with the actor's id `discover/person/?q={THE_ACTOR}` .
-2. We then make a second call `/discover/movie?with_genres={YOUR GENRES}&sort_by=vote_average.desc` to get all the movies of a certain genre the actor was in using the actor's id.
+## Using The Movie Database API
+1. We request popular movies of a given genre using the relevant genre ID
+2. The API returns an array of movie objects, which include the IDs for each movie
+3. We make another request to the API for each movie, using the ID to ask for trailers
+4. Finally we build an array of movie objects containing the title and YouTube key for the trailer
 
  
 
