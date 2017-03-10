@@ -34,7 +34,11 @@ _After some unsuccessful API calls returning the results we didn't want, we swit
 ## Using The New York Times API
 _At a glance:_
 1. Base URL: `http://api.nytimes.com/svc/movies/{version}/{reviews}`
+
 2. Scope: Movie reviews by New York Times critics
+
 3. HTTP method : `GET`
+
 4. Response formats: JSON (.json, default)
+
 5. Final URL: `https://api.nytimes.com/svc/movies/v2/reviews/search.json?query=` + movie title searched + `&api-key=`;
