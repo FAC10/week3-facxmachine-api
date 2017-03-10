@@ -105,11 +105,10 @@ function renderSummaryAndLink(response) {
 
     article.forEach(function(item, index){
       console.log(item, 2);
-      if (item.id === item[index]) {
       appendToDom(movieSummary, item);
       appendToDom(movieLink, item);
       appendToDom(movieTitle, item);
-    };
+
     })
 
 }
@@ -144,12 +143,7 @@ function createOurElement(element, elClass, href, src) {
     return htmlElement;
 }
 
-<<<<<<< Updated upstream
-=======
-// var testFrame = createOurElement('iframe', 'test', null, 'https://www.youtube.com/embed/' + 'VrrnjYgDBEk');
-// appendToDom(testFrame, document.body);
 
->>>>>>> Stashed changes
 function controller(results) {
     var iframeArray = [];
 
