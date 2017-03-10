@@ -33,7 +33,6 @@ attachListener(getElement('searchForm'), 'submit', handleSubmit);
 
 function getTrailers(movieObj, callback) {
     var movieArray = movieObj.results.slice(0, 5).map(function(movie) {
-        // console.log({title: movie.title, id: movie.id});
         return {
             title: movie.title,
             id: movie.id
@@ -49,7 +48,6 @@ function getTrailers(movieObj, callback) {
             };
             results.push(movie);
             if (movieArray.length === results.length) {
-                console.log(results);
                 callback(results);
             }
         })
@@ -91,28 +89,34 @@ function buildURL(movieTitle) {
 
 //UPDATE DOM MODULE ====================
 
-function renderSummaryAndLink(response) {
-    var summary = response.results[0].summary_short;
-    var link = response.results[0].link.url;
-    var title = response.results[0].display_title;
-    var movieSummary = createOurElement('p', 'result_review');
-    var movieLink = createOurElement('a', 'result_link', link);
-    var movieTitle = createOurElement('h2', 'result_title');
-    var article = document.querySelectorAll('article');
-    console.log(article, 1)
+function compileData(nytRes, tmdbRes, index) {
+    var dataObj = {
+      index: index,
+      title: nytRes.results[0].display_title,
+      summary: nytRes.results[0].summary_short,
+      link: nytRes.results[0].link.url,
+      url: 'https://www.youtube.com/embed/' + tmdbRes.key,
+    }
+    // console.log(dataObj);
 
-    movieSummary.innerHTML = summary;
-    movieLink.innerText = 'Link to review';
-    movieTitle.innerText = title;
-
-    article.forEach(function(item, index){
-      console.log(item, 2);
-      appendToDom(movieSummary, item);
-      appendToDom(movieLink, item);
-      appendToDom(movieTitle, item);
-
-    })
-
+    function renderToDOM(dataObj) {
+      var article = getElement('article' + index);
+      article.innerHTML = '';
+      var movieVideo = createOurElement('iframe', 'result_video', null, dataObj.url);
+      var movieBody = createOurElement('div', 'result_body');
+      var movieTitle = createOurElement('h2', 'result_title');
+      appendToDom(movieTitle, movieBody);
+      movieTitle.textContent = dataObj.title;
+      var movieSummary = createOurElement('p', 'result_review');
+      appendToDom(movieSummary, movieBody);
+      movieSummary.innerHTML = dataObj.summary;
+      var movieLink = createOurElement('a', 'result_link', dataObj.link);
+      appendToDom(movieLink, movieBody);
+      movieLink.textContent = 'Link to review';
+      appendToDom(movieVideo, article);
+      appendToDom(movieBody, article);
+    }
+    renderToDOM(dataObj);
 }
 
 /**
@@ -134,7 +138,7 @@ function appendToDom(element, parent) {
 function createOurElement(element, elClass, href, src) {
     var htmlElement = document.createElement(element);
     if (elClass) {
-        htmlElement.class = elClass;
+        htmlElement.className = elClass;
     }
     if (href) {
         htmlElement.href = href;
@@ -147,20 +151,10 @@ function createOurElement(element, elClass, href, src) {
 
 
 function controller(results) {
-    var iframeArray = [];
-
-    results.map(function(result) {
-        var title = result.title;
-        var key = result.key;
-        iframeArray.push(createOurElement('iframe', title, null, 'https://www.youtube.com/embed/' + result.key));
-        var constructedURL = buildURL(title); //Feed title here//
-        fetch(constructedURL, renderSummaryAndLink);
-
+    results.forEach(function(result, index) {
+        var constructedURL = buildURL(result.title);
+        fetch(constructedURL, function(nytRes) {
+          compileData(nytRes, result, index)
+        });
     });
-    var article = document.querySelectorAll('article');
-
-    iframeArray.forEach(function(iframe, index) {
-      appendToDom(iframe, article[index]);
-    })
-
 }
