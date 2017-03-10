@@ -28,6 +28,9 @@ function handleSubmit(event) {
     getMoviesByGenre(event.target[0].value, controller);
 }
 
+attachListener(getElement('searchForm'), 'submit', handleSubmit);
+
+
 function getTrailers(movieObj, callback) {
     var movieArray = movieObj.results.slice(0, 5).map(function(movie) {
         // console.log({title: movie.title, id: movie.id});
@@ -161,6 +164,3 @@ function controller(results) {
     })
 
 }
-
-
-attachListener(getElement('searchForm'), 'submit', handleSubmit);
